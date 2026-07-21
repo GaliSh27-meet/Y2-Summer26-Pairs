@@ -2,12 +2,14 @@
 import os
 from anthropic import Anthropic
 from dotenv import load_dotenv
+import json
+
 
 load_dotenv()
 
 client = Anthropic(api_key=os.getenv('ANTHROPIC_API_KEY'))
 
-def run_chat():
+def run_chat1():
     print('You: (type exit to quit)')
     system_message =system_message = """
 You are Agent 1 of a workout planning web application.
@@ -68,9 +70,14 @@ Response format:
         reply = response.content[0].text
        # print(response)
         print(f'Claude: {reply}')
-
-        history.append({'role': 'assistant', 'content': reply})
         
+        list1 = []
+   
+        history.append({'role': 'assistant', 'content': reply})
+        list1.append(reply)
+        print(list1)
+        with open("workout_plan.json", "w") as file:
+         Shared_data = json.dump(list1,file)
 
-run_chat()
+run_chat1()
 

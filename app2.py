@@ -1,5 +1,6 @@
 import os
 import json
+import json
 from anthropic import Anthropic
 from dotenv import load_dotenv
 from ics import Calendar, Event
@@ -49,7 +50,6 @@ def export_calendar_to_pdf(calendar, filename="my_schedule.pdf"):
         print("No events in calenda r to export!")
         return
 
-    # Build dynamic HTML rows from our in-memory calendar 
     event_html_blocks = ""
     for event in sorted_events:
         # Format dates visually for clean reading
@@ -144,21 +144,32 @@ def export_calendar_to_pdf(calendar, filename="my_schedule.pdf"):
         os.remove(temp_html_path)
         
     print(f"Success! Saved document to {os.path.abspath(filename)}")
-def run_chat():
+def run_chat2():
     cal = Calendar()
     print('You: (type exit to quit)')
+    workout_plan_context = ""
+    if os.path.exists("workout_plan.json"):
+        with open("workout_plan.json", "r") as file:
+            shared_data = json.load(file)
+            workout_plan_context = json.dumps(shared_data)
     system_message =  """
 You are Ethan, a Calander and time managment organizer .
 
 Your job is to take pre built activities and make them into a calander.
 
+Context from Agent 1 (Workout Plan):
+CRITICAL MUST ADRESS: {workout_plan_context}
+
 Rules:
 - Always Be as orgenised as possible.
+- Always check if the json has relevent data for the add_events_to_calendar function.
+- If you recive days without a specific date always assume the impliction is to the closest day.
 - Never let two activities overlap eachother.
 
 Response format:
 - Start with a one-sentence summary of what the user said.
 - Then give your response.
+- If the json does have relevent contants, convert it to a format recognised by the add_events_to_calendar function and call it imidiatly.
 - Countinue to next step or offer more.
 CRITICAL: When processing events, you MUST call the add_events_to_calendar tool immediately.
 """
@@ -220,4 +231,4 @@ def add_events_to_calendar(calendar, event_list):
         calendar.events.add(event)
     return calendar
 
-run_chat()
+run_chat2()
