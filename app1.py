@@ -1,9 +1,7 @@
-
 import os
 from anthropic import Anthropic
 from dotenv import load_dotenv
 import json
-
 
 load_dotenv()
 
@@ -30,7 +28,6 @@ Your job is to ask the user about:
 - make workout recommendations.
 - plan every single dayof the workouts
 -when creating the workout plan add befor tellin if outside or inside the weather in this area is good or bad for the day and if the user should workout outside or inside. 
-
 
 Rules:
 - Be friendly and encouraging.

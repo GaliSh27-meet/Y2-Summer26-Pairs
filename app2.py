@@ -1,6 +1,5 @@
 import os
 import json
-import json
 from anthropic import Anthropic
 from dotenv import load_dotenv
 from ics import Calendar, Event
@@ -207,7 +206,6 @@ CRITICAL: When processing events, you MUST call the add_events_to_calendar tool 
         reply = response.content[0].text
         print(f'Claude: {reply}')
         history.append({'role': 'assistant', 'content': reply})
-
 
 def add_events_to_calendar(calendar, event_list):
     """
