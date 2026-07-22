@@ -2,11 +2,72 @@ import os
 from anthropic import Anthropic
 from dotenv import load_dotenv
 import json
+import weasyprint
 
 load_dotenv()
 
 client = Anthropic(api_key=os.getenv('ANTHROPIC_API_KEY'))
 
+def export_workout_to_pdf(workout_text, filename="workout_plan.pdf"):
+
+    html_document = f"""
+    <html>
+    <head>
+        <style>
+            @page {{
+                size: A4;
+                margin: 20mm;
+            }}
+
+            body {{
+                font-family: Arial, sans-serif;
+                color: #1e293b;
+            }}
+
+            .header {{
+                background-color: #0f172a;
+                color: white;
+                padding: 20px;
+                border-radius: 8px;
+                margin-bottom: 20px;
+            }}
+
+            .content {{
+                white-space: pre-wrap;
+                font-size: 12pt;
+                line-height: 1.6;
+            }}
+        </style>
+    </head>
+
+    <body>
+
+        <div class="header">
+            <h1>Your Personalized Workout Plan</h1>
+        </div>
+
+        <div class="content">
+            {workout_text}
+        </div>
+
+    </body>
+    </html>
+    """
+
+    temp_file = "temp_workout.html"
+
+    with open(temp_file, "w", encoding="utf-8") as f:
+        f.write(html_document)
+
+
+    weasyprint.HTML(temp_file).write_pdf(filename)
+
+
+    if os.path.exists(temp_file):
+        os.remove(temp_file)
+
+
+    print(f"PDF saved: {filename}")
 def run_chat1():
     print('You: (type exit to quit)')
     system_message =system_message = """
@@ -63,16 +124,22 @@ Response format:
             system=system_message,
             messages=history
         )
+        workout_text = response.content[0].text
+
+        #print(workout_text)
+
+        export_workout_to_pdf(workout_text)
        # print(response)
         reply = response.content[0].text
        # print(response)
         print(f'Claude: {reply}')
         
+        
         list1 = []
    
         history.append({'role': 'assistant', 'content': reply})
         list1.append(reply)
-        print(list1)
+        #print(list1)
         with open("workout_plan.json", "w") as file:
          Shared_data = json.dump(list1,file)
 
